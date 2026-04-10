@@ -1,0 +1,46 @@
+﻿<hr />
+
+<h4>Saved Categories</h4>
+
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Sequence</th>
+            <th>Is Parent</th>
+            <th>Parent Sequence</th>
+            <th>URL</th>
+        </tr>
+    </thead>
+
+    <tbody id="categoryTableBody">
+    </tbody>
+</table>
+<script>
+        function loadCategories() {
+        $.ajax({
+            url: "https://localhost:7032/api/Category",
+            type: "GET",
+            success: function (data) {
+
+                let rows = "";
+
+                data.forEach(function (item) {
+                    rows += `
+                        <tr>
+                            <td>${item.categoryName}</td>
+                            <td>${item.categoryDescription}</td>
+                            <td>${item.categorySequence}</td>
+                            <td>${item.isParent ? "Yes" : "No"}</td>
+                            <td>${item.parentSequence ?? "-"}</td>
+                            <td>${item.url}</td>
+                        </tr>
+                    `;
+                });
+
+                $("#categoryTableBody").html(rows);
+            }
+        });
+    }
+</script>

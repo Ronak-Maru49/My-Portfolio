@@ -1,0 +1,20 @@
+﻿@model List<My_Admin_panel.Models.Faq>
+
+<h2>Frequently Asked Questions</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <ul>
+        @foreach (var faq in Model)
+        {
+            <li>
+                <b>@faq.Question</b><br />
+                @faq.Answer
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No FAQs found.</p>
+}

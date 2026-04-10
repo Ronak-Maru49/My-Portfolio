@@ -1,0 +1,58 @@
+﻿@{
+    ViewData["Title"] = "FAQs";
+}
+
+<div class="container mt-4">
+    <h2>Frequently Asked Questions</h2>
+    <hr />
+
+    <div id="faqList" class="mt-3">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Loading FAQs...</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: 'https://localhost:7032/api/Faq', // your API URL
+                type: 'GET',
+                success: function (faqs) {
+                    if (faqs.length === 0) {
+                        $('#faqList').html('<div class="alert alert-info">No FAQs found.</div>');
+                        return;
+                    }
+
+                    var html = '';
+                    faqs.forEach(function(faq) {
+                        html += `
+                        <div class="card mb-3 border-start border-primary" style="border-left-width: 5px !important;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 text-primary">Q: ${faq.question}</h5>
+                                    <div>
+                                        <span class="badge bg-dark">${faq.category}</span>
+                                        ${faq.subCategory ? `<span class="badge bg-secondary">${faq.subCategory}</span>` : ''}
+                                    </div>
+                                </div>
+                                <p class="card-text text-muted">
+                                    <strong>A:</strong> ${faq.answer}
+                                </p>
+                            </div>
+                        </div>`;
+                    });
+                    $('#faqList').html(html);
+                },
+                error: function() {
+                    $('#faqList').html('<div class="alert alert-danger">Failed to load FAQs. Please check if the API is running.</div>');
+                }
+            });
+        });
+    </script>
+}
