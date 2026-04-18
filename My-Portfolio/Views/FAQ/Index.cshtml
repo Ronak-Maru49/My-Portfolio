@@ -1,20 +1,281 @@
-﻿@model List<My_Admin_panel.Models.Faq>
-
-<h2>Frequently Asked Questions</h2>
-
-@if (Model != null && Model.Count > 0)
-{
-    <ul>
-        @foreach (var faq in Model)
-        {
-            <li>
-                <b>@faq.Question</b><br />
-                @faq.Answer
-            </li>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQ Knowledge Base</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    </ul>
-}
-else
-{
-    <p>No FAQs found.</p>
-}
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #ffffff;
+            color: #111827;
+            padding: 3rem 1.25rem 5rem;
+        }
+
+        .page-wrap {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            margin-bottom: 3.5rem;
+        }
+
+            .hero h1 {
+                font-size: 38px;
+                font-weight: 700;
+                color: #0f172a;
+                line-height: 1.2;
+                margin-bottom: 0.75rem;
+            }
+
+            .hero p {
+                font-size: 16px;
+                color: #64748b;
+                line-height: 1.6;
+            }
+
+        /* ── Section ── */
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* ── FAQ Item ── */
+        .faq-item {
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+        }
+
+            .faq-item:last-child {
+                border-bottom: none;
+            }
+
+        .faq-number {
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            min-width: 28px;
+            padding-top: 2px;
+            letter-spacing: 0.03em;
+        }
+
+        .faq-body {
+            flex: 1;
+        }
+
+        .faq-q {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .faq-q-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.5;
+        }
+
+        .faq-toggle {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1.5px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+            .faq-toggle svg {
+                width: 11px;
+                height: 11px;
+                stroke: #94a3b8;
+                stroke-width: 2.2;
+                stroke-linecap: round;
+                fill: none;
+                transition: transform 0.28s ease, stroke 0.2s;
+            }
+
+        .faq-item.open .faq-toggle {
+            background: #0f172a;
+            border-color: #0f172a;
+        }
+
+            .faq-item.open .faq-toggle svg {
+                stroke: #fff;
+                transform: rotate(45deg);
+            }
+
+        .faq-a {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.32s ease;
+        }
+
+        .faq-item.open .faq-a {
+            max-height: 600px;
+        }
+
+        .faq-a-inner {
+            padding-top: 0.65rem;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.85;
+        }
+
+        /* ── Loading / Error ── */
+        .state-msg {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .spinner {
+            width: 26px;
+            height: 26px;
+            border: 2.5px solid #e2e8f0;
+            border-top-color: #0f172a;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <div class="page-wrap">
+
+        <div class="hero">
+            <h1 id="pageTitle">FAQ Knowledge Base</h1>
+            <p id="pageSubtitle">Loading your frequently asked questions...</p>
+        </div>
+
+        <div id="faqList">
+            <div class="state-msg">
+                <div class="spinner"></div>
+                Loading questions...
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ── Helpers ──────────────────────────────────────────────────────
+        function slugify(str) {
+          return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+        }
+
+        // Group FAQs by their `category` field.
+        // Falls back to a single "General" group if no category is present.
+        function groupByCategory(faqs) {
+          const groups = {};
+          faqs.forEach(f => {
+            const cat = f.category || "General";
+            if (!groups[cat]) groups[cat] = [];
+            groups[cat].push(f);
+          });
+          return groups;
+        }
+
+        // ── Render ────────────────────────────────────────────────────────
+        function renderFaqs(faqs) {
+          const container = document.getElementById("faqList");
+
+          if (!faqs || faqs.length === 0) {
+            container.innerHTML = `<div class="state-msg">No FAQs found.</div>`;
+            return;
+          }
+
+          document.getElementById("pageSubtitle").textContent =
+            "Browse the questions below to find what you need.";
+
+          const groups = groupByCategory(faqs);
+          let globalIdx = 1;
+          let html = "";
+
+          for (const [cat, items] of Object.entries(groups)) {
+            html += `<div class="faq-section" id="section-${slugify(cat)}">`;
+            if (Object.keys(groups).length > 1) {
+              html += `<h2 class="section-title">${cat}</h2>`;
+            }
+            items.forEach(f => {
+              const num = String(globalIdx++).padStart(2, "0");
+              html += `
+                <div class="faq-item">
+                  <span class="faq-number">${num}</span>
+                  <div class="faq-body">
+                    <div class="faq-q">
+                      <span class="faq-q-text">${f.question}</span>
+                      <span class="faq-toggle" aria-hidden="true">
+                        <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
+                          <line x1="6" y1="1" x2="6" y2="11"/>
+                          <line x1="1" y1="6" x2="11" y2="6"/>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="faq-a">
+                      <div class="faq-a-inner">${f.answer}</div>
+                    </div>
+                  </div>
+                </div>`;
+            });
+            html += `</div>`;
+          }
+
+          container.innerHTML = html;
+
+          // Accordion toggle
+          container.querySelectorAll(".faq-item").forEach(item => {
+            item.addEventListener("click", () => {
+              const isOpen = item.classList.contains("open");
+              container.querySelectorAll(".faq-item.open").forEach(el => el.classList.remove("open"));
+              if (!isOpen) item.classList.add("open");
+            });
+          });
+        }
+
+        function showError() {
+          document.getElementById("faqList").innerHTML =
+            `<div class="state-msg">Failed to load FAQs. Please try again later.</div>`;
+          document.getElementById("pageSubtitle").textContent = "";
+        }
+
+        // ── Fetch ─────────────────────────────────────────────────────────
+        fetch("https://localhost:7032/api/Faq")
+          .then(res => {
+            if (!res.ok) throw new Error("Bad response");
+            return res.json();
+          })
+          .then(data => renderFaqs(data))
+          .catch(() => showError());
+    </script>
+
+</body>
+</html>
