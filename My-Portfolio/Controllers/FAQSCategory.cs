@@ -7,16 +7,16 @@ namespace My_Admin_panel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GetCategoryController : ControllerBase
+    public class FaqCategoryController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public GetCategoryController(ApplicationDbContext context)
+        public FaqCategoryController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Category
+        // GET: api/FaqCategory
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
