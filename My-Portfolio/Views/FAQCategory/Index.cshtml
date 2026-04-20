@@ -1,14 +1,6 @@
 ﻿@{
     ViewData["Title"] = "FAQ - Frequently Asked Questions";
-    Layout = null;
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Bootstrap Icons -->
@@ -58,100 +50,6 @@
                 z-index: 0;
                 opacity: 0.35;
             }
-
-        /* ── Navbar ── */
-        .navbar {
-            background: rgba(8,12,16,0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
-            padding: 0.9rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 200;
-        }
-
-        .navbar-brand {
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: 1.45rem;
-            color: var(--text-primary) !important;
-            letter-spacing: -0.5px;
-        }
-
-            .navbar-brand span {
-                color: var(--accent);
-            }
-
-        .nav-link {
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: var(--text-secondary) !important;
-            transition: color 0.2s;
-            padding: 0.4rem 0.85rem !important;
-        }
-
-            .nav-link:hover, .nav-link.active {
-                color: var(--text-primary) !important;
-            }
-
-        .btn-hire {
-            background: var(--accent);
-            color: #080c10 !important;
-            font-weight: 700;
-            font-size: 0.82rem;
-            letter-spacing: 0.04em;
-            border-radius: 6px;
-            padding: 0.45rem 1.1rem !important;
-            transition: opacity 0.2s, transform 0.2s;
-            border: none;
-        }
-
-            .btn-hire:hover {
-                opacity: 0.85;
-                transform: translateY(-1px);
-            }
-
-        .navbar-toggler {
-            border-color: var(--border);
-        }
-
-        .navbar-toggler-icon {
-            filter: invert(1);
-        }
-
-        /* ── Breadcrumb ── */
-        .breadcrumb-bar {
-            border-bottom: 1px solid var(--border);
-            padding: 0.7rem 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .breadcrumb {
-            margin: 0;
-            font-size: 0.82rem;
-        }
-
-        .breadcrumb-item a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-            .breadcrumb-item a:hover {
-                color: var(--accent);
-            }
-
-        .breadcrumb-item.active {
-            color: var(--text-secondary);
-        }
-
-        .breadcrumb-item + .breadcrumb-item::before {
-            color: var(--text-muted);
-            content: "/";
-        }
-
         /* ── Hero ── */
         .faq-hero {
             padding: 5rem 0 4rem;
@@ -805,43 +703,6 @@
             }
         }
     </style>
-</head>
-<body>
-
-    <!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="#">My<span>.</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navMenu">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1 mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Case Studies</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="#">FAQ's</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                    <li class="nav-item ms-lg-2">
-                        <a class="nav-link btn-hire" href="#">Hire Me</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- ═══════════════════════ BREADCRUMB ═══════════════════════ -->
-    <div class="breadcrumb-bar">
-        <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active">FAQ's</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
     <!-- ═══════════════════════ HERO ═══════════════════════ -->
     <section class="faq-hero">
         <div class="container">
