@@ -1,281 +1,226 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FAQ Knowledge Base</title>
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+﻿@{
+    ViewData["Title"] = "FAQ Knowledge Base";
+}
+
+<style>
+    :root {
+        --primary-blue: #2563eb;
+        --bg-light: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --number-bg: #eff6ff;
+    }
+
+    body {
+        background: var(--bg-light);
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    .page-wrap {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    /* --- Category Badge Style --- */
+    .category-tag {
+        display: inline-block;
+        background: #dbeafe; /* Light blue badge */
+        color: var(--primary-blue);
+        font-size: 13px;
+        font-weight: 700;
+        padding: 6px 18px;
+        border-radius: 50px;
+        margin-bottom: 24px;
+        margin-top: 32px;
+        text-transform: capitalize;
+    }
+
+    /* --- 2 Column Grid --- */
+    .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Force 2 columns */
+        gap: 20px;
+        margin-bottom: 40px;
+        align-items: start;
+    }
+
+    /* --- FAQ Card Item --- */
+    .faq-item {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        gap: 16px;
+    }
+
+        .faq-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #ffffff;
-            color: #111827;
-            padding: 3rem 1.25rem 5rem;
+    /* --- Number Box --- */
+    .faq-number {
+        background: var(--number-bg);
+        color: var(--primary-blue);
+        min-width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .faq-body {
+        flex: 1;
+    }
+
+    .faq-q {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .faq-q-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-main);
+        line-height: 1.4;
+    }
+
+    .faq-toggle svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--text-main);
+        transition: transform 0.3s ease;
+    }
+
+    /* --- Answer Area --- */
+    .faq-a {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+    }
+
+    .faq-item.open .faq-a {
+        max-height: 500px; /* Large enough to show content */
+        margin-top: 12px;
+    }
+
+    .faq-item.open .faq-toggle svg {
+        transform: rotate(180deg);
+    }
+
+    .faq-a-inner {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    /* --- Mobile View --- */
+    @@media (max-width: 850px) {
+        .faq-grid {
+            grid-template-columns: 1fr;
         }
+    }
 
-        .page-wrap {
-            max-width: 860px;
-            margin: 0 auto;
-        }
+    .state-msg {
+        text-align: center;
+        padding: 50px;
+        color: var(--text-muted);
+    }
+</style>
 
-        /* ── Hero ── */
-        .hero {
-            margin-bottom: 3.5rem;
-        }
-
-            .hero h1 {
-                font-size: 38px;
-                font-weight: 700;
-                color: #0f172a;
-                line-height: 1.2;
-                margin-bottom: 0.75rem;
-            }
-
-            .hero p {
-                font-size: 16px;
-                color: #64748b;
-                line-height: 1.6;
-            }
-
-        /* ── Section ── */
-        .faq-section {
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid #f1f5f9;
-        }
-
-        /* ── FAQ Item ── */
-        .faq-item {
-            display: flex;
-            gap: 1.25rem;
-            align-items: flex-start;
-            padding: 1.25rem 0;
-            border-bottom: 1px solid #f1f5f9;
-            cursor: pointer;
-        }
-
-            .faq-item:last-child {
-                border-bottom: none;
-            }
-
-        .faq-number {
-            font-size: 13px;
-            font-weight: 700;
-            color: #94a3b8;
-            min-width: 28px;
-            padding-top: 2px;
-            letter-spacing: 0.03em;
-        }
-
-        .faq-body {
-            flex: 1;
-        }
-
-        .faq-q {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 1rem;
-        }
-
-        .faq-q-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: #0f172a;
-            line-height: 1.5;
-        }
-
-        .faq-toggle {
-            flex-shrink: 0;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1.5px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1px;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-            .faq-toggle svg {
-                width: 11px;
-                height: 11px;
-                stroke: #94a3b8;
-                stroke-width: 2.2;
-                stroke-linecap: round;
-                fill: none;
-                transition: transform 0.28s ease, stroke 0.2s;
-            }
-
-        .faq-item.open .faq-toggle {
-            background: #0f172a;
-            border-color: #0f172a;
-        }
-
-            .faq-item.open .faq-toggle svg {
-                stroke: #fff;
-                transform: rotate(45deg);
-            }
-
-        .faq-a {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.32s ease;
-        }
-
-        .faq-item.open .faq-a {
-            max-height: 600px;
-        }
-
-        .faq-a-inner {
-            padding-top: 0.65rem;
-            font-size: 14px;
-            color: #475569;
-            line-height: 1.85;
-        }
-
-        /* ── Loading / Error ── */
-        .state-msg {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .spinner {
-            width: 26px;
-            height: 26px;
-            border: 2.5px solid #e2e8f0;
-            border-top-color: #0f172a;
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            margin: 0 auto 0.75rem;
-        }
-
-        
-    </style>
-</head>
-<body>
-
-    <div class="page-wrap">
-
-        <div class="hero">
-            <h1 id="pageTitle">FAQ Knowledge Base</h1>
-            <p id="pageSubtitle">Loading your frequently asked questions...</p>
-        </div>
-
-        <div id="faqList">
-            <div class="state-msg">
-                <div class="spinner"></div>
-                Loading questions...
-            </div>
-        </div>
-
+<div class="page-wrap">
+    <div id="faqContainer">
+        <div class="state-msg">Loading Categories and FAQs...</div>
     </div>
+</div>
 
+@section Scripts {
     <script>
-        // ── Helpers ──────────────────────────────────────────────────────
-        function slugify(str) {
-          return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-        }
+        const categoryApi = "https://localhost:7032/api/FaqCategory";
+        const faqApi = "https://localhost:7032/api/Faq";
 
-        // Group FAQs by their `category` field.
-        // Falls back to a single "General" group if no category is present.
-        function groupByCategory(faqs) {
-          const groups = {};
-          faqs.forEach(f => {
-            const cat = f.category || "General";
-            if (!groups[cat]) groups[cat] = [];
-            groups[cat].push(f);
-          });
-          return groups;
-        }
+        async function loadData() {
+            const container = document.getElementById("faqContainer");
+            try {
+                const [catRes, faqRes] = await Promise.all([
+                    fetch(categoryApi),
+                    fetch(faqApi)
+                ]);
 
-        // ── Render ────────────────────────────────────────────────────────
-        function renderFaqs(faqs) {
-          const container = document.getElementById("faqList");
+                if (!catRes.ok || !faqRes.ok) throw new Error("API failed");
 
-          if (!faqs || faqs.length === 0) {
-            container.innerHTML = `<div class="state-msg">No FAQs found.</div>`;
-            return;
-          }
+                const categories = await catRes.json();
+                const allFaqs = await faqRes.json();
 
-          document.getElementById("pageSubtitle").textContent =
-            "Browse the questions below to find what you need.";
+                if (categories.length === 0) {
+                    container.innerHTML = `<div class="state-msg">No categories found.</div>`;
+                    return;
+                }
 
-          const groups = groupByCategory(faqs);
-          let globalIdx = 1;
-          let html = "";
+                // Sorting categories by sequence
+                categories.sort((a, b) => a.categorySequence - b.categorySequence);
 
-          for (const [cat, items] of Object.entries(groups)) {
-            html += `<div class="faq-section" id="section-${slugify(cat)}">`;
-            if (Object.keys(groups).length > 1) {
-              html += `<h2 class="section-title">${cat}</h2>`;
+                let html = "";
+                categories.forEach(cat => {
+                    // Filter FAQs that belong to this category
+                    const filteredFaqs = allFaqs.filter(f =>
+                        f.category === cat.categoryName || f.category === cat.url
+                    );
+
+                    if (filteredFaqs.length > 0) {
+                        html += `<div class="category-tag">${cat.categoryName}</div>`;
+                        html += `<div class="faq-grid">`;
+
+                        filteredFaqs.forEach((f, index) => {
+                            // index + 1 ensures each category starts numbering from 01
+                            const num = String(index + 1).padStart(2, "0");
+                            html += `
+                                <div class="faq-item">
+                                    <div class="faq-number">${num}</div>
+                                    <div class="faq-body">
+                                        <div class="faq-q">
+                                            <span class="faq-q-text">${f.question}</span>
+                                            <span class="faq-toggle">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                            </span>
+                                        </div>
+                                        <div class="faq-a">
+                                            <div class="faq-a-inner">${f.answer}</div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        });
+                        html += `</div>`;
+                    }
+                });
+
+                container.innerHTML = html || `<div class="state-msg">No FAQs found.</div>`;
+
+                // Accordion Logic
+                container.querySelectorAll(".faq-item").forEach(item => {
+                    item.addEventListener("click", (e) => {
+                        item.classList.toggle("open");
+                    });
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="state-msg" style="color: red;">Error: APIs could not be reached.</div>`;
             }
-            items.forEach(f => {
-              const num = String(globalIdx++).padStart(2, "0");
-              html += `
-                <div class="faq-item">
-                  <span class="faq-number">${num}</span>
-                  <div class="faq-body">
-                    <div class="faq-q">
-                      <span class="faq-q-text">${f.question}</span>
-                      <span class="faq-toggle" aria-hidden="true">
-                        <svg viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-                          <line x1="6" y1="1" x2="6" y2="11"/>
-                          <line x1="1" y1="6" x2="11" y2="6"/>
-                        </svg>
-                      </span>
-                    </div>
-                    <div class="faq-a">
-                      <div class="faq-a-inner">${f.answer}</div>
-                    </div>
-                  </div>
-                </div>`;
-            });
-            html += `</div>`;
-          }
-
-          container.innerHTML = html;
-
-          // Accordion toggle
-          container.querySelectorAll(".faq-item").forEach(item => {
-            item.addEventListener("click", () => {
-              const isOpen = item.classList.contains("open");
-              container.querySelectorAll(".faq-item.open").forEach(el => el.classList.remove("open"));
-              if (!isOpen) item.classList.add("open");
-            });
-          });
         }
 
-        function showError() {
-          document.getElementById("faqList").innerHTML =
-            `<div class="state-msg">Failed to load FAQs. Please try again later.</div>`;
-          document.getElementById("pageSubtitle").textContent = "";
-        }
-
-        // ── Fetch ─────────────────────────────────────────────────────────
-        fetch("https://localhost:7032/api/Faq")
-          .then(res => {
-            if (!res.ok) throw new Error("Bad response");
-            return res.json();
-          })
-          .then(data => renderFaqs(data))
-          .catch(() => showError());
+        document.addEventListener("DOMContentLoaded", loadData);
     </script>
-
-</body>
-</html>
+}
